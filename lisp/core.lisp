@@ -58,3 +58,23 @@
 	)
 )
 
+;; ========================================================
+;; FUNCIÓN: auditoria
+;; NATURALEZA: Impura (realiza una auditoria del sistema, registrando los cambios de estado del semaforo cada 6 segundos)
+;; ESTRATEGIA: Función recursiva de cola 
+;; IMPACTO: No destructiva (No modifica ninguna estructura de datos en la memoria del programa)
+;; ========================================================
+
+(defun auditoria (color-anterior)
+    (sleep 6) ; tiempo maximo entre cambios de estado, para asegurar que se registren cambios significativos
+    (format t "~%testeando")
+    (let ((color-nuevo (timer (obtener-timestamp))))
+        (cond
+            ((not (equal color-anterior color-nuevo))
+                (format t "~%Tiempo ~a: la luz ha cambiado de ~a a ~a" (obtener-timestamp) color-anterior color-nuevo)
+                (auditoria color-nuevo)
+            )
+            (t (auditoria color-anterior))
+        )
+    )
+)
