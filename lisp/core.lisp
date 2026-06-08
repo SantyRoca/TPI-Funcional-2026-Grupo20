@@ -110,3 +110,16 @@
         (t "Error: el tipo de ciclo suministrado no es valido.")
     )
 )
+
+;; ========================================================
+;; FUNCIÓN: ciclos-por-tiempo
+;; NATURALEZA: Pura (calcula la cantidad de ciclos completos en un período de tiempo dado)
+;; ESTRATEGIA: Función simple (realiza un cálculo directo basado en la duración de un ciclo completo)
+;; IMPACTO: no destructiva
+;; ========================================================
+
+(defun ciclos-por-tiempo (minutos)
+    (let ((minutos-en-seg (* minutos 60))) ; convierto los minutos a segundos para calcular la cantidad de ciclos completos en ese tiempo
+        (truncate (/ minutos-en-seg 216)) ; utilizo truncate para obtener el numero entero de ciclos completos, ya que no se pueden tener ciclos parciales 
+    )
+)
