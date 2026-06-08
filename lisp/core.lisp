@@ -78,3 +78,35 @@
         )
     )
 )
+
+;; ========================================================
+;; FUNCIÓN: duracion-ciclo
+;; NATURALEZA: Pura
+;; ESTRATEGIA: Función condicional (determina la duración del ciclo y evalúa si está en el rango óptimo) 
+;; IMPACTO: no destructiva
+;; ========================================================
+
+(defun duracion-ciclo (duracion-total)
+    (cond
+        ((and (numberp duracion-total) (< duracion-total 35)) 'ciclo-corto)
+        ((and (numberp duracion-total) (> duracion-total 150)) 'ciclo-largo)
+        ((numberp duracion-total) 'ciclo-optimo)
+        (t "dato invalido")
+    )
+)
+
+;; ========================================================
+;; FUNCIÓN: recomendacion-ciclo
+;; NATURALEZA: Pura (proporciona recomendaciones basadas en la duración del ciclo, sin modificar el estado del sistema)
+;; ESTRATEGIA: Función condicional (analiza la duración del ciclo y devuelve una recomendación específica para cada caso)
+;; IMPACTO: no destructiva 
+;; ========================================================
+
+(defun recomendacion-ciclo (duracion)
+    (cond
+        ((equal duracion 'ciclo-corto) "Recomendacion: aumentar la duración del ciclo para mejorar la fluidez del tráfico y reducir la ansiedad de los conductores.")
+        ((equal duracion 'ciclo-optimo) "Recomendacion: la duración del ciclo es óptima, no se requieren cambios.")
+        ((equal duracion 'ciclo-largo) "Recomendacion: reducir la duración del ciclo para evitar la frustración de los conductores y mejorar la eficiencia del tráfico.")
+        (t "Error: el tipo de ciclo suministrado no es valido.")
+    )
+)
