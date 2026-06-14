@@ -1,9 +1,38 @@
-;; ========================================================
+;; =============================================================================================================================
+;;                                         FUNCIONES AUXILIARES
+;; =============================================================================================================================
+
+
+;; =============================================================================================================================
+;; FUNCIÓN: validar-transiciones-p
+;; NATURALEZA: Pura (Solo analiza los colores que recibe sin tocar nada de la memoria del sistema)
+;; ESTRATEGIA: Función Predicado (Una funcion de control que solo responde T o NIL)
+;; IMPACTO: No destructiva (Determina el resultado mediante operadores booleanos sin alterar estructuras)
+;; =============================================================================================================================
+
+
+(defun validar-transiciones-p (color-actual cambiar-a)
+    (cond
+        ((and (equal color-actual 'en-rojo) (equal cambiar-a 'verde))       t)
+        ((and (equal color-actual 'en-verde) (equal cambiar-a 'amarillo))   t)
+        ((and (equal color-actual 'en-amarillo) (equal cambiar-a 'rojo))    t)
+        (t nil)
+    )
+)
+
+
+
+;; ===========================================           REQUERIMIENTO 1             ===========================================
+
+
+;; =============================================================================================================================
 ;; FUNCIÓN: transicion
-;; NATURALEZA: Pura (No cambia nada afuera; si le pasas los mismos colores, siempre te devuelve el mismo resultado)
-;; ESTRATEGIA: Función Condicional (Elige que hacer usando una condicion logica de tipo 'if')
-;; IMPACTO: No destructiva (No borra ni altera datos, crea una lista nueva para dar la respuesta)
-;; ========================================================
+;; NATURALEZA: Pura. Modela la máquina de estados abstracta de forma aislada sin dependencias de variables externas.
+;; ESTRATEGIA: Función Condicional. Determina la validez de la mutación de luces invocando a un predicado externo.
+;; IMPACTO: No Destructiva. Utiliza el constructor 'list' para generar una estructura dinámica nueva en memoria.
+;; =============================================================================================================================
+
+
 (defun transicion (color-actual cambiar-a)
     (if (validar-transiciones-p color-actual cambiar-a)
       (list color-actual (format nil "cambiar-a-~a" cambiar-a))
@@ -11,21 +40,6 @@
     )
 )
 
-;; ========================================================
-;; FUNCIÓN: validar-transiciones-p
-;; NATURALEZA: Pura (Solo analiza los colores que recibe sin tocar nada de la memoria del sistema)
-;; ESTRATEGIA: Función Predicado (Una funcion de control que solo responde T o NIL)
-;; IMPACTO: No destructiva (Determina el resultado mediante operadores booleanos sin alterar estructuras)
-;; ========================================================
-
-(defun validar-transiciones-p (color-actual cambiar-a)
-    (cond
-        ((and (equal color-actual 'en-rojo) (equal cambiar-a 'verde)) t)
-        ((and (equal color-actual 'en-verde) (equal cambiar-a 'amarillo)) t)
-        ((and (equal color-actual 'en-amarillo) (equal cambiar-a 'rojo)) t)
-        (t nil)
-    )
-)
 
 ;; ========================================================
 ;; FUNCIÓN: obtener-timestamp
