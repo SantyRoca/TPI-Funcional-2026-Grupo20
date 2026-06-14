@@ -1,4 +1,5 @@
 👤 Integrante 1: [Santiago Nicolas Roca] - Usuario GitHub: [SantyRoca]
+
 1. Código en Common Lisp (Fase 1 y 2)
 ●	[ ] Desarrollo 100% Humano: El código fue diseñado, escrito y depurado puramente por mí/el grupo sin intervención de IA.
 ●	[x] Asistencia de IA (gemini): Utilicé IA como un tutor o documentación dinámica (búsqueda de errores sintácticos, explicación de funciones primitivas), pero la lógica y clasificación del semáforo fue estructurada por el grupo.
