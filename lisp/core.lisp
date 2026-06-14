@@ -176,15 +176,24 @@
 
 
 
-;; ========================================================
-;; FUNCIÓN: ciclos-por-tiempo
-;; NATURALEZA: Pura (calcula la cantidad de ciclos completos en un período de tiempo dado)
-;; ESTRATEGIA: Función simple (realiza un cálculo directo basado en la duración de un ciclo completo)
-;; IMPACTO: no destructiva
-;; ========================================================
+;; ===========================================           REQUERIMIENTO 5             ===========================================
 
-(defun ciclos-por-tiempo (minutos)
-    (let ((minutos-en-seg (* minutos 60))) ; convierto los minutos a segundos para calcular la cantidad de ciclos completos en ese tiempo
-        (truncate (/ minutos-en-seg 216)) ; utilizo truncate para obtener el numero entero de ciclos completos, ya que no se pueden tener ciclos parciales 
-    )
+
+
+;; =============================================================================================================================
+;; FUNCIÓN: ciclos-por-tiempo
+;; NATURALEZA: Pura. Ejecuta proyecciones numéricas deterministas aisladas sin accesos a disco o periféricos.
+;; ESTRATEGIA: Función Simple. Aplica transformaciones de escala y una división entera por truncamiento con 'truncate'.
+;; IMPACTO: No Destructiva. Confina el cálculo seguro a un entorno local inmutable mediante la estructura 'let'.
+;; =============================================================================================================================
+
+(defun ciclos-por-tiempo (minutos duracion_rojo duracion_verde duracion_amarillo)
+
+    (if (and (numberp minutos) (duracion-ciclo duracion_rojo duracion_verde duracion_amarillo))
+        (let (  (minutos-en-seg (* minutos 60)) )
+            (truncate minutos-en-seg (duracion-ciclo duracion_rojo duracion_verde duracion_amarillo))
+        )
+      "Error: datos no numericos")
 )
+
+
