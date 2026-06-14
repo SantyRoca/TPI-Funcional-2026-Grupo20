@@ -197,3 +197,36 @@
 )
 
 
+;; ===========================================           REQUERIMIENTO 6             ===========================================
+
+
+
+;; =============================================================================================================================
+;; FUNCION: informe-distribucion
+;; NATURALEZA: Impura. Genera efectos colaterales visuales imprimiendo un reporte de ingeniería en la consola estándar.
+;; ESTRATEGIA: Función Simple. Encadena los cálculos matemáticos porcentuales por medio de un bloque secuencial 'let*'.
+;; IMPACTO: No Destructiva. Muestra los datos computados en el flujo de salida sin destruir ni alterar las entradas.
+;; =============================================================================================================================
+
+
+
+(defun informe-distribucion (duracion_rojo duracion_verde duracion_amarillo)
+    (if (and (numberp duracion_rojo) (numberp duracion_verde) (numberp duracion_amarillo))
+        (let* (
+            ; realizo los calculos para sacar el porcentaje que aparece cada color en una hora
+
+            (total_ciclo (duracion-ciclo duracion_rojo duracion_verde duracion_amarillo))
+            (pct-rojo (* (/ duracion_rojo total_ciclo) 100.0))
+            (pct-amarillo (* (/ duracion_amarillo total_ciclo) 100.0))
+            (pct-verde (* (/ duracion_verde total_ciclo) 100.0)))
+            
+            ;imprimo los resultados
+            (format t "~%INFORME DE DISTRIBUCION TEMPORAL (1 HORA):")
+            (format t "~%ROJO: ~,2f%" pct-rojo)
+            (format t "~%VERDE: ~,2f%" pct-verde)
+            (format t "~%AMARILLO: ~,2f%" pct-amarillo)
+
+        )
+        (format t "~%Error: Todas las duraciones de los colores deben ser numeros.") 
+    )
+)
