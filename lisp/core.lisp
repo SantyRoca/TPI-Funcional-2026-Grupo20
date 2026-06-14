@@ -2,6 +2,51 @@
 ;;                                         FUNCIONES AUXILIARES
 ;; =============================================================================================================================
 
+;; =============================================================================================================================
+;; FUNCIÓN: duracion-ciclo
+;; NATURALEZA: Pura (No genera efectos secundarios y ante los mismos argumentos siempre devuelve el mismo resultado)
+;; ESTRATEGIA: Función Condicional (Utiliza un predicado lógico de tipo 'if' para validar y bifurcar el flujo)
+;; IMPACTO: No Destructiva (Realiza operaciones aritméticas elementales sin alterar ninguna estructura en memoria)
+;; =============================================================================================================================
+
+
+(defun duracion-ciclo (duracion_rojo duracion_verde duracion_amarillo)
+  (if (and (numberp duracion_rojo) (numberp duracion_verde) (numberp duracion_amarillo)) ; Valida que los segundos de los 3 colores sean numericos
+      (+ duracion_rojo duracion_verde duracion_amarillo)                                 ; realiza la suma para tener el total en un ciclo
+      nil)                                                                               ; devuelve nil en caso de que los segundos alguno de los 3 colores no sea numerico
+)
+
+
+;; =============================================================================================================================
+;; FUNCIÓN: obtener-timestamp
+;; NATURALEZA: Impura. Consulta el reloj del hardware del sistema operativo, retornando valores mutables en el tiempo.
+;; ESTRATEGIA: Función Simple. Aplica una resta directa de valores de época en base a una constante temporal fija.
+;; IMPACTO: No Destructiva. Produce un entero atómico independiente sin manipular ni corromper punteros en memoria.
+;; =============================================================================================================================
+
+
+(defun obtener-timestamp ()
+    (- (get-universal-time) (encode-universal-time 0 0 0 25 6 1978)) ;; fecha del primer mundial de argentina ganado
+)
+
+
+;; =============================================================================================================================
+;; FUNCIÓN: convertir-color
+;; NATURALEZA: Pura (Realiza un mapeo directo de símbolos sin alterar el estado global ni interactuar con la E/S)
+;; ESTRATEGIA: Función Condicional (Estructurada mediante un bloque 'cond' para evaluar múltiples ramas simbólicas)
+;; IMPACTO: No Destructiva (Retorna un símbolo nuevo o el mismo valor de entrada sin modificar datos existentes)
+;; =============================================================================================================================
+
+
+(defun convertir-color (color)
+    (cond
+        ((equal color 'rojo) 'en-rojo)
+        ((equal color 'verde) 'en-verde)
+        ((equal color 'amarillo) 'en-amarillo)
+        (t color)
+    )
+)
+
 
 ;; =============================================================================================================================
 ;; FUNCIÓN: validar-transiciones-p
@@ -41,36 +86,33 @@
 )
 
 
-;; ========================================================
-;; FUNCIÓN: obtener-timestamp
-;; NATURALEZA: Impura (Pregunta la hora a la computadora; como el tiempo corre, cada vez que la llamas da un numero distinto)
-;; ESTRATEGIA: Función simple (Hace cuentas matematicas basicas)
-;; IMPACTO: No destructiva (Hace calculos con numeros sueltos sin romper ni modificar variables del programa)
-;; ========================================================
 
-(defun obtener-timestamp ()
-	(- (get-universal-time)
-		;segundos minutos horas fecha mes anio
-		(encode-universal-time 0 0 0 1 1 1970)
-	)
-)
+;; ===========================================           REQUERIMIENTO 2             ===========================================
 
-;; ========================================================
-;; FUNCIÓN: timer
-;; NATURALEZA: Pura (recibe un timestamp y devuelve el color del semaforo correspondiente a ese tiempo)
-;; ESTRATEGIA: Función Condicional (Usa un 'cond' para revisar en que tramo de segundos cae el tiempo y decidir el color)
-;; IMPACTO: No destructiva (Crea una variable temporal con 'let' que desaparece apenas la función termina su trabajo)
-;; ========================================================
 
-(defun timer (ts)
-	(let ((tiempo (mod ts 216) ))
+
+;; =============================================================================================================================
+;; FUNCIÓN: ftimer
+;; NATURALEZA: Pura. Recibe un parámetro de tiempo inmutable y computa el color matemáticamente sin usar el reloj global.
+;; ESTRATEGIA: Función Condicional. Usa un bloque 'cond' para clasificar la congruencia modular del ciclo temporal.
+;; IMPACTO: No Destructiva. Define una variable local con 'let' que se destruye automáticamente al salir del ámbito.
+;; =============================================================================================================================
+
+
+;; Le llamo ftimer y no timer por que SBCL no me lo tomaba
+
+(defun ftimer (ts duracion_rojo duracion_verde duracion_amarillo)
+	(let ((ciclo (duracion-ciclo duracion_rojo duracion_verde duracion_amarillo)))
 		(cond
-			((<= tiempo 90 ) 'rojo)
-			((<= tiempo 96) 'amarillo)
-			(t 'verde)
+            ((or (not ciclo) (not (numberp ts))) "Error datos no numericos")
+			((< (mod ts ciclo) duracion_rojo)                            'rojo)
+			((< (mod ts ciclo) (+ duracion_rojo duracion_verde))         'verde)
+			( t			 			                                     'amarillo)
 		)
 	)
 )
+
+
 
 ;; ========================================================
 ;; FUNCIÓN: auditoria
