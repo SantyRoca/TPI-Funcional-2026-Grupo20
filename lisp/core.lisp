@@ -152,21 +152,29 @@
 
 
 
-;; ========================================================
+;; ===========================================           REQUERIMIENTO 4             ===========================================
+
+
+
+;; =============================================================================================================================
 ;; FUNCIÓN: recomendacion-ciclo
-;; NATURALEZA: Pura (proporciona recomendaciones basadas en la duración del ciclo, sin modificar el estado del sistema)
-;; ESTRATEGIA: Función condicional (analiza la duración del ciclo y devuelve una recomendación específica para cada caso)
-;; IMPACTO: no destructiva 
-;; ========================================================
+;; NATURALEZA: Pura. Evalúa un entero y retorna un string estático predecible sin alterar configuraciones de la red.
+;; ESTRATEGIA: Función Condicional. Emplea un condicional múltiple 'cond' para determinar rangos de optimización vial.
+;; IMPACTO: No Destructiva. Analiza el parámetro de manera síncrona sin causar mutaciones en las variables de origen.
+;; =============================================================================================================================
+
+
 
 (defun recomendacion-ciclo (duracion)
-    (cond
-        ((equal duracion 'ciclo-corto) "Recomendacion: aumentar la duración del ciclo para mejorar la fluidez del tráfico y reducir la ansiedad de los conductores.")
-        ((equal duracion 'ciclo-optimo) "Recomendacion: la duración del ciclo es óptima, no se requieren cambios.")
-        ((equal duracion 'ciclo-largo) "Recomendacion: reducir la duración del ciclo para evitar la frustración de los conductores y mejorar la eficiencia del tráfico.")
-        (t "Error: el tipo de ciclo suministrado no es valido.")
-    )
+  (cond
+      ((and (numberp duracion) (< duracion 35)) "Recomendacion: aumentar la duracion del ciclo para mejorar la fluidez")
+      ((and (numberp duracion) (> duracion 150)) "Recomendacion: reducir la duracion del ciclo para evitar la frustracion")
+      ((numberp duracion) "Recomendacion: la duracion del ciclo es optima, no se requieren cambios.")
+      (t "Error: el tipo de ciclo suministrado no es valido.")
+  )
 )
+
+
 
 ;; ========================================================
 ;; FUNCIÓN: ciclos-por-tiempo
