@@ -114,42 +114,43 @@
 
 
 
-;; ========================================================
-;; FUNCIÓN: auditoria
-;; NATURALEZA: Impura (realiza una auditoria del sistema, registrando los cambios de estado del semaforo cada 6 segundos)
-;; ESTRATEGIA: Función recursiva de cola 
-;; IMPACTO: No destructiva (No modifica ninguna estructura de datos en la memoria del programa)
-;; ========================================================
+;; ===========================================           REQUERIMIENTO 3             ===========================================
 
-(defun auditoria (color-anterior)
-    (sleep 6) ; tiempo maximo entre cambios de estado, para asegurar que se registren cambios significativos
-    (format t "~%testeando")
-    (let ((color-nuevo (timer (obtener-timestamp))))
+
+
+;; =============================================================================================================================
+;; FUNCIÓN: auditoria
+;; NATURALEZA: Impura. Modifica el flujo secundario de la terminal escribiendo logs históricos a través de 'format'.
+;; ESTRATEGIA: Función Recursiva de Cola. La autollamada es la última expresión evaluada de la rama.
+;; IMPACTO: No Destructiva. Pasa las actualizaciones de estado mediante la pila de argumentos sin usar mutación local.
+;; =============================================================================================================================
+
+
+
+(defun auditoria (color-anterior duracion_rojo duracion_verde duracion_amarillo cambios) 
+    (let* ((color-nuevo (ftimer (obtener-timestamp) duracion_rojo duracion_verde duracion_amarillo ))
+            (colores-validos '(rojo verde amarillo)))
         (cond
-            ((not (equal color-anterior color-nuevo))
+            ((or 
+                (stringp color-anterior) 
+                (not (duracion-ciclo duracion_rojo duracion_verde duracion_amarillo)) 
+                (not (numberp cambios)) 
+                (not (member color-anterior colores-validos))) "Error: No se puede iniciar la auditoria con datos invalidos")
+
+            ((= cambios 0) "Cantidad de transiciones o cambios mostrados")
+            ((validar-transiciones-p (convertir-color color-anterior) color-nuevo)
                 (format t "~%Tiempo ~a: la luz ha cambiado de ~a a ~a" (obtener-timestamp) color-anterior color-nuevo)
-                (auditoria color-nuevo)
+                (sleep 1)
+                (auditoria color-nuevo duracion_rojo duracion_verde duracion_amarillo (- cambios 1))
             )
-            (t (auditoria color-anterior))
+            (t  (sleep 1) 
+                (auditoria color-anterior duracion_rojo duracion_verde duracion_amarillo cambios)
+            )
         )
     )
 )
 
-;; ========================================================
-;; FUNCIÓN: duracion-ciclo
-;; NATURALEZA: Pura
-;; ESTRATEGIA: Función condicional (determina la duración del ciclo y evalúa si está en el rango óptimo) 
-;; IMPACTO: no destructiva
-;; ========================================================
 
-(defun duracion-ciclo (duracion-total)
-    (cond
-        ((and (numberp duracion-total) (< duracion-total 35)) 'ciclo-corto)
-        ((and (numberp duracion-total) (> duracion-total 150)) 'ciclo-largo)
-        ((numberp duracion-total) 'ciclo-optimo)
-        (t "dato invalido")
-    )
-)
 
 ;; ========================================================
 ;; FUNCIÓN: recomendacion-ciclo
