@@ -26,7 +26,7 @@
 
 
 (defun obtener-timestamp ()
-    (- (get-universal-time) (encode-universal-time 0 0 0 25 6 1978)) ;; fecha del primer mundial de argentina ganado
+    (- (get-universal-time) (encode-universal-time 0 0 0 1 1 1970))
 )
 
 
@@ -64,6 +64,7 @@
         (t nil)
     )
 )
+
 
 
 
@@ -151,7 +152,6 @@
 )
 
 
-
 ;; ===========================================           REQUERIMIENTO 4             ===========================================
 
 
@@ -197,6 +197,7 @@
 )
 
 
+
 ;; ===========================================           REQUERIMIENTO 6             ===========================================
 
 
@@ -230,3 +231,209 @@
         (format t "~%Error: Todas las duraciones de los colores deben ser numeros.") 
     )
 )
+
+
+
+;; =============================================================================================================================
+;;                                         REQUERIMIENTO 7: ASEGURAMIENTO DE LA CALIDAD
+;; =============================================================================================================================
+
+;; ==========================================
+;; PRUEBAS: REQUERIMIENTO 1 - transicion
+;; ==========================================
+
+;; Camino Normal: Transición válida de Rojo a Verde 
+(transicion 'en-rojo 'verde)
+;; Esperado -> (EN-ROJO "cambiar-a-verde")
+
+;; Camino Alternativo: Transición válida de Amarillo a Rojo
+(transicion 'en-amarillo 'rojo)
+;; Esperado -> (EN-AMARILLO "cambiar-a-rojo")
+
+;; Caso de Error: Intento de transición inválida 
+(transicion 'en-rojo 'amarillo)
+;; Esperado -> (EN-ROJO ACCION-POR-DEFECTO)
+
+;; Caso de Error: Parámetros inválidos 
+(transicion 'en-azul 'verde)
+;; Esperado -> (EN-AZUL ACCION-POR-DEFECTO)
+
+
+;; ==========================================
+;; PRUEBAS: REQUERIMIENTO 2 - ftimer
+;; ==========================================
+
+;; Camino Normal: 
+(ftimer 45 90 120 6)
+
+
+;; Camino Alternativo:
+(ftimer 100 90 120 6)
+
+
+;; Caso de Error: Datos no numéricos en el Timestamp (String)
+(ftimer "150" 90 120 6)
+;; Esperado -> "Error datos no numericos"
+
+;; Caso de Error: Datos no numéricos en las configuraciones de tiempos (Símbolo)
+(ftimer 10 'rojo 120 6)
+;; Esperado -> "Error datos no numericos"
+
+
+;; ==========================================
+;; PRUEBAS: REQUERIMIENTO 3 - auditoria
+;; ==========================================
+
+;; Camino Normal: Inicio de auditoría con color correcto y 2 transiciones solicitadas 
+(auditoria 'rojo 1 1 1 2)
+;; Esperado -> Imprime los cambios en consola secuencialmente y finaliza con:
+;;             "Cantidad de transiciones o cambios mostrados"
+
+;; Caso de Error: Color inicial inválido
+(auditoria 'azul 90 120 6 3)
+;; Esperado -> "Error: No se puede iniciar la auditoria con datos invalidos"
+
+;; Caso de Error: Argumento de cambios no numérico
+(auditoria 'verde 90 120 6 'muchos)
+;; Esperado -> "Error: No se puede iniciar la auditoria con datos invalidos"
+
+
+;; ==========================================
+;; PRUEBAS: REQUERIMIENTO 4 - recomendacion-ciclo
+;; ==========================================
+
+;; Camino Normal: Duración óptima (Dentro del rango psicológico estándar vial 35-150s)
+(recomendacion-ciclo (duracion-ciclo 50 50 20))
+;; Esperado -> "Recomendacion: la duracion del ciclo es optima, no se requieren cambios."
+
+
+;; Camino alternativo (Pasarle directamente el total de la duracion de mi ciclo)
+; Duración óptima (Dentro del rango psicológico estándar vial 35-150s)
+(recomendacion-ciclo 120)
+;; Esperado -> "Recomendacion: la duracion del ciclo es optima, no se requieren cambios."
+
+
+;; Camino Alternativo (Pasarle directamente el total de la duracion de mi ciclo)
+;Ciclo excesivamente corto (Menor a 35 segundos)
+(recomendacion-ciclo 30)
+;; Esperado -> "Recomendacion: aumentar la duracion del ciclo para mejorar la fluidez"
+
+
+;; Camino Alternativo (Pasarle directamente el total de la duracion de mi ciclo)
+;Ciclo excesivamente largo (Mayor a 150 segundos)
+(recomendacion-ciclo 180)
+;; Esperado -> "Recomendacion: reducir la duracion del ciclo para evitar la frustracion"
+
+
+;; Caso de Error: Se suministra un dato no numérico
+(recomendacion-ciclo nil)
+;; Esperado -> "Error: el tipo de ciclo suministrado no es valido."
+
+
+;; ==========================================
+;; PRUEBAS: REQUERIMIENTO 5 - ciclos-por-tiempo
+;; ==========================================
+
+;; Camino Normal: Cálculo de ciclos completos en 10 minutos con tiempos estándar (10 min * 60s = 600s / 60s)
+(ciclos-por-tiempo 10 20 20 20)
+;; Esperado -> 10
+
+;; Camino Alternativo: Duración exacta que equivale a un número entero de ciclos (3.6 minutos = 216 segundos)
+(ciclos-por-tiempo 3.6 90 120 6)
+;; Esperado -> 1
+
+;; Caso de Error: Minutos pasados como string
+(ciclos-por-tiempo "10" 90 120 6)
+;; Esperado -> "Error: datos no numericos"
+
+
+;; ==========================================
+;; PRUEBAS: REQUERIMIENTO 6 - informe-distribucion
+;; ==========================================
+
+;; Camino Normal: Generación del informe porcentual con datos estándar
+(informe-distribucion 90 120 6)
+;; Esperado -> Imprime en consola:
+;;             INFORME DE DISTRIBUCION TEMPORAL (1 HORA):
+;;             ROJO: 41.67%
+;;             VERDE: 55.56%
+;;             AMARILLO: 2.78%
+
+;; Caso de Error: datos no numéricos
+(informe-distribucion 90 'cien 6)
+;; Esperado -> Imprime en consola:
+;;             Error: Todas las duraciones de los colores deben ser numeros.
+
+
+
+;; =============================================================================================================================
+;;                                     PRUEBAS ADICIONALES: FUNCIONES AUXILIARES
+;; =============================================================================================================================
+
+;; ==========================================
+;; PRUEBAS: AUXILIAR 1 - duracion-ciclo
+;; ==========================================
+
+;; Camino Normal: Cálculo correcto con los tiempos clásicos de la Fase 1 (90 + 120 + 6)
+(duracion-ciclo 90 120 6)
+;; Esperado -> 216
+
+;; Camino Alternativo: Tiempos de ciclo reducidos o de prueba
+(duracion-ciclo 10 20 5)
+;; Esperado -> 35
+
+;; Caso de Error: Uno de los argumentos es un símbolo (no numérico)
+(duracion-ciclo 90 'verde 6)
+;; Esperado -> NIL
+
+;; Caso de Error: Se omiten datos pasando NIL
+(duracion-ciclo nil 120 6)
+;; Esperado -> NIL
+
+
+;; ==========================================
+;; PRUEBAS: AUXILIAR 2 - obtener-timestamp
+;; ==========================================
+
+;; Camino Normal: Retorna un número entero grande (segundos transcurridos desde 1978)
+(obtener-timestamp)
+;; Esperado -> Un entero (Ej: 151381242)
+
+
+;; ==========================================
+;; PRUEBAS: AUXILIAR 3 - convertir-color
+;; ==========================================
+
+;; Camino Normal: Mapeo directo del símbolo 'rojo al estado de la máquina 'en-rojo
+(convertir-color 'rojo)
+;; Esperado -> EN-ROJO
+
+;; Camino Alternativo: Mapeo de otro color elemental ('verde)
+(convertir-color 'verde)
+;; Esperado -> EN-VERDE
+
+;; Camino Alternativo: Si ya recibe el formato final 'en-amarillo, lo mantiene igual (rama 't' del cond)
+(convertir-color 'en-amarillo)
+;; Esperado -> EN-AMARILLO
+
+
+
+;; ==========================================
+;; PRUEBAS: AUXILIAR 4 - validar-transiciones-p
+;; ==========================================
+
+;; Camino Normal: Transición vial reglamentaria de Verde a Amarillo
+(validar-transiciones-p 'en-verde 'amarillo)
+;; Esperado -> T
+
+;; Camino Alternativo: Transición vial reglamentaria de Amarillo a Rojo
+(validar-transiciones-p 'en-amarillo 'rojo)
+;; Esperado -> T
+
+;; Caso de Error: Transición peligrosa/inválida directa de Verde a Rojo (Debería bloquearse)
+(validar-transiciones-p 'en-verde 'rojo)
+;; Esperado -> NIL
+
+;; Caso de Error: El color actual no usa el prefijo "en-" esperado por la máquina de estados
+(validar-transiciones-p 'rojo 'verde)
+;; Esperado -> NIL
