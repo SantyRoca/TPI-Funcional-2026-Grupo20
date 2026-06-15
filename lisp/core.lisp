@@ -1,3 +1,5 @@
+;; Cargo mi libreria local-time
+
 (Load #P"C:/Users/WinterOS/quicklisp/setup.lisp")
 
 (ql:quickload "local-time")
@@ -172,8 +174,7 @@
 
 (defun auditoria-IT2 (color-anterior duracion_rojo duracion_verde duracion_amarillo cambios)
 
-    (let* ((ts-humano (obtener-timestamp-humano))
-           (color-nuevo (timer-IT2 (obtener-timestamp) duracion_rojo duracion_verde duracion_amarillo))
+    (let* ((color-nuevo (timer-IT2 (obtener-timestamp) duracion_rojo duracion_verde duracion_amarillo))
            (colores-validos '(rojo rojo-intermitente verde verde-intermitente amarillo amarillo-intermitente)))
         (cond
             ((or
@@ -186,7 +187,7 @@
 
             ((validar-transiciones-p-IT2 (convertir-color-IT2 color-anterior) color-nuevo) ;Caso de encontrar una transicion
                 (sleep 1)
-                (cons (list (format nil "[~a]" ts-humano) color-anterior color-nuevo) 
+                (cons (list (format nil "[~a]" (obtener-timestamp-humano)) color-anterior color-nuevo) 
                     (auditoria-IT2 color-nuevo duracion_rojo duracion_verde duracion_amarillo (- cambios 1)))
             )
             (t  (sleep 1) ; caso para volver a llamarse

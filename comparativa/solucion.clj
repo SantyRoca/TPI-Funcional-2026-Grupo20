@@ -62,3 +62,22 @@
     (and (= color-actual :en-amarillo) (= cambiar-a :amarillo-intermitente)) true
     (and (= color-actual :en-amarillo-intermitente) (= cambiar-a :rojo)) true
     :else false))
+
+;; =============================================================================================================================
+;;                                           REQUERIMIENTO 1 - FASE 3 CLOJURE
+;; =============================================================================================================================
+
+
+;; ========================================================
+;; FUNCIÓN: transicion
+;; NATURALEZA: Pura (Mapeo de control sin efectos secundarios)
+;; ESTRATEGIA: Condicional 
+;; IMPACTO: No destructiva (Estructura de retorno basada en Listas)
+;; ========================================================
+
+(defn transicion [color-actual cambiar-a]
+    (if (validar-transiciones-p color-actual cambiar-a)
+        (list color-actual (str "cambiar-a-" (name cambiar-a)))
+        (list color-actual :accion-por-defecto)
+    )
+)
