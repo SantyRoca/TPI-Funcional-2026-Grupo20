@@ -49,7 +49,7 @@
 ;; =============================================================================================================================
 
 (defun obtener-timestamp-humano ()
-  ;Devuelve la fecha y hora actual en el huso horario local en un formato legible string: YYYY-MM-DD HH:MM:SS
+  ;Devuelve la fecha y hora actual en el uso horario local en un formato legible string: YYYY-MM-DD HH:MM:SS
   (local-time:format-timestring nil 
     (local-time:timestamp- (local-time:now) 3 :hour) ;; <-- Restamos 3 horas puramente al vuelo
     :format '((:year 4) #\- (:month 2) #\- (:day 2) " " (:hour 2) #\: (:min 2) #\: (:sec 2)))
@@ -290,20 +290,20 @@
 ;; FUNCIÓN AUXILIAR RECURSIVA
 (defun escribir-lineas-informe-IT2 (lista-datos stream)
   (cond 
-    ;; Caso base: ya no hay más datos que procesar
+
     ((null lista-datos) t)
     
-    ;; Caso recursivo: extraemos el primer registro y lo escribimos
+
     (t 
       (let* ((registro-actual (car lista-datos))
              (timestamp (first registro-actual)) ; le paso la fecha y hora
              (anterior  (second registro-actual)) ; le paso el color anterior
              (nuevo     (third registro-actual))) ; le paso el color nuevo 
         
-        ;; Escribimos en el archivo usando el stream pasado por parámetro
+
         (format stream "~a - Transición: ~a -> ~a~%" timestamp anterior nuevo)
         
-        ;; Pasar recursivamente al siguiente registro (recursión de cola)
+
         (escribir-lineas-informe-IT2 (cdr lista-datos) stream)
       )
     )
@@ -322,8 +322,8 @@
 (defun informe-IT2 (datos)
   (if (null datos)
       "Error: No hay datos para generar el informe."
-      ;; Apuntamos directo adentro de tu carpeta lisp
-      (with-open-file (stream "C:/lisp/informe-ejecucion-semaforo.txt" 
+
+      (with-open-file (stream "C:/Segundo anio/integrador/informe-ejecucion-semaforo.txt" 
                               :direction :output 
                               :if-exists :supersede 
                               :if-does-not-exist :create)
@@ -334,7 +334,7 @@
         (escribir-lineas-informe-IT2 datos stream)
         
         (format stream "~%--- Fin del Informe ---")
-        "Informe generado con éxito en 'C:/lisp/informe-ejecucion-semaforo.txt'"
+        "Informe generado con éxito en 'C:/Segundo anio/integrador/informe-ejecucion-semaforo.txt'"
       )
   )
 )
@@ -342,67 +342,95 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ;; =============================================================================================================================
-;;                                         REQUERIMIENTO 7: ASEGURAMIENTO DE LA CALIDAD
+;;                                           REQUERIMIENTO 7: ASEGURAMIENTO DE LA CALIDAD
 ;; =============================================================================================================================
 
 ;; ==========================================
-;; PRUEBAS: REQUERIMIENTO 1 - transicion
+;; PRUEBAS: REQUERIMIENTO 1 - transicion-IT2
 ;; ==========================================
 
-;; Camino Normal: Transición válida de Rojo a Verde 
-(transicion 'en-rojo 'verde)
-;; Esperado -> (EN-ROJO "cambiar-a-verde")
+;; Camino Normal: Transición válida de Rojo a su siguiente fase de intermitencia
+(transicion-IT2 'en-rojo 'rojo-intermitente)
+;; Esperado -> (EN-ROJO "cambiar-a-rojo-intermitente")
 
-;; Camino Alternativo: Transición válida de Amarillo a Rojo
-(transicion 'en-amarillo 'rojo)
-;; Esperado -> (EN-AMARILLO "cambiar-a-rojo")
 
-;; Caso de Error: Intento de transición inválida 
-(transicion 'en-rojo 'amarillo)
+;; Camino Alternativo: Transición válida de Verde Intermitente a Amarillo
+(transicion-IT2 'en-verde-intermitente 'amarillo)
+;; Esperado -> (EN-VERDE-INTERMITENTE "cambiar-a-amarillo")
+
+
+;; Caso de Error: Intento de transición inválida directa (saltearse la intermitencia)
+(transicion-IT2 'en-rojo 'verde)
 ;; Esperado -> (EN-ROJO ACCION-POR-DEFECTO)
 
-;; Caso de Error: Parámetros inválidos 
-(transicion 'en-azul 'verde)
-;; Esperado -> (EN-AZUL ACCION-POR-DEFECTO)
 
 
 ;; ==========================================
-;; PRUEBAS: REQUERIMIENTO 2 - ftimer
+;; PRUEBAS: REQUERIMIENTO 2 - timer-IT2
 ;; ==========================================
 
-;; Camino Normal: 
-(ftimer 45 90 120 6)
+
+;; Camino Normal:
+(timer-IT2 (obtener-timestamp) 30 20 5)
 
 
-;; Camino Alternativo:
-(ftimer 100 90 120 6)
-
-
-;; Caso de Error: Datos no numéricos en el Timestamp (String)
-(ftimer "150" 90 120 6)
+;; Caso de Error: Datos alfanuméricos en el Timestamp actual
+(timer-IT2 'times 30 20 5)
 ;; Esperado -> "Error datos no numericos"
 
-;; Caso de Error: Datos no numéricos en las configuraciones de tiempos (Símbolo)
-(ftimer 10 'rojo 120 6)
+
+;; Caso de Error: Configuraciones de tiempos pasadas como símbolos
+(timer-IT2 10 30 'veinte 5)
 ;; Esperado -> "Error datos no numericos"
 
 
 ;; ==========================================
-;; PRUEBAS: REQUERIMIENTO 3 - auditoria
+;; PRUEBAS: REQUERIMIENTO 3 - auditoria-IT2
 ;; ==========================================
 
-;; Camino Normal: Inicio de auditoría con color correcto y 2 transiciones solicitadas 
-(auditoria 'rojo 1 1 1 2)
-;; Esperado -> Imprime los cambios en consola secuencialmente y finaliza con:
-;;             "Cantidad de transiciones o cambios mostrados"
 
-;; Caso de Error: Color inicial inválido
-(auditoria 'azul 90 120 6 3)
+;; Camino Normal: Inicio de auditoría recursiva con color base válido capturando 3 transiciones del reloj
+(auditoria-IT2 'rojo 30 20 5 3)
+;; Esperado ->   (("[fecha-actual hora-actual]" ROJO ROJO-INTERMITENTE) ("[fecha-actual hora-actual]" ROJO-INTERMITENTE VERDE) ...)
+
+;; Camino alternativo: utilizar la funcion timer para pasar el color que esta prendido ahora mismo
+(auditoria-IT2 (timer-IT2 (obtener-timestamp) 30 20 5) 30 20 5 3)
 ;; Esperado -> "Error: No se puede iniciar la auditoria con datos invalidos"
 
-;; Caso de Error: Argumento de cambios no numérico
-(auditoria 'verde 90 120 6 'muchos)
+;; Caso de Error: El argumento de cantidad de cambios no es un valor numérico entero
+(auditoria-IT2 'verde 30 20 5 'tres)
 ;; Esperado -> "Error: No se puede iniciar la auditoria con datos invalidos"
 
 
@@ -410,31 +438,24 @@
 ;; PRUEBAS: REQUERIMIENTO 4 - recomendacion-ciclo
 ;; ==========================================
 
-;; Camino Normal: Duración óptima (Dentro del rango psicológico estándar vial 35-150s)
-(recomendacion-ciclo (duracion-ciclo 50 50 20))
+;; Camino Normal: Evaluación dinámica calculando la duración real de tu ciclo (30+20+5 + 9s intermitencias = 64s)
+(recomendacion-ciclo (duracion-ciclo-IT2 30 20 5))
 ;; Esperado -> "Recomendacion: la duracion del ciclo es optima, no se requieren cambios."
 
-
-;; Camino alternativo (Pasarle directamente el total de la duracion de mi ciclo)
-; Duración óptima (Dentro del rango psicológico estándar vial 35-150s)
-(recomendacion-ciclo 120)
+;; Camino Alternativo: Envío directo de una métrica de tiempo óptima dentro del rango (35-150s)
+(recomendacion-ciclo 90)
 ;; Esperado -> "Recomendacion: la duracion del ciclo es optima, no se requieren cambios."
 
-
-;; Camino Alternativo (Pasarle directamente el total de la duracion de mi ciclo)
-;Ciclo excesivamente corto (Menor a 35 segundos)
-(recomendacion-ciclo 30)
+;; Camino Alternativo: Ciclo excesivamente bajo que compromete la fluidez (Menor a 35 segundos)
+(recomendacion-ciclo 25)
 ;; Esperado -> "Recomendacion: aumentar la duracion del ciclo para mejorar la fluidez"
 
-
-;; Camino Alternativo (Pasarle directamente el total de la duracion de mi ciclo)
-;Ciclo excesivamente largo (Mayor a 150 segundos)
+;; Camino Alternativo: Ciclo excesivamente alto que genera demora (Mayor a 150 segundos)
 (recomendacion-ciclo 180)
 ;; Esperado -> "Recomendacion: reducir la duracion del ciclo para evitar la frustracion"
 
-
-;; Caso de Error: Se suministra un dato no numérico
-(recomendacion-ciclo nil)
+;; Caso de Error: El tipo de dato suministrado no es un número
+(recomendacion-ciclo 'noventa)
 ;; Esperado -> "Error: el tipo de ciclo suministrado no es valido."
 
 
@@ -442,60 +463,75 @@
 ;; PRUEBAS: REQUERIMIENTO 5 - ciclos-por-tiempo
 ;; ==========================================
 
-;; Camino Normal: Cálculo de ciclos completos en 10 minutos con tiempos estándar (10 min * 60s = 600s / 60s)
-(ciclos-por-tiempo 10 20 20 20)
-;; Esperado -> 10
+;; Camino Normal: Proyección de ciclos completos en una hora (60 min) sobre un ciclo de 64s (3600s / 64s)
+(ciclos-por-tiempo 60 30 20 5)
+;; Esperado -> 56
 
-;; Camino Alternativo: Duración exacta que equivale a un número entero de ciclos (3.6 minutos = 216 segundos)
-(ciclos-por-tiempo 3.6 90 120 6)
+;; Camino Alternativo: Tiempo exacto que equivale de forma matemática a un único ciclo (1.066 minutos)
+(ciclos-por-tiempo 1 30 20 1)
 ;; Esperado -> 1
 
-;; Caso de Error: Minutos pasados como string
-(ciclos-por-tiempo "10" 90 120 6)
+;; Caso de Error: Envío del parámetro temporal en formato String
+(ciclos-por-tiempo "60" 30 20 5)
 ;; Esperado -> "Error: datos no numericos"
 
 
 ;; ==========================================
-;; PRUEBAS: REQUERIMIENTO 6 - informe-distribucion
+;; PRUEBAS: REQUERIMIENTO 6 - informe-distribucion-IT2
 ;; ==========================================
 
-;; Camino Normal: Generación del informe porcentual con datos estándar
-(informe-distribucion 90 120 6)
+;; Camino Normal: Generación y salida por REPL de los porcentajes incluyendo los 9s de transiciones intermitentes
+(informe-distribucion-IT2 30 20 5)
 ;; Esperado -> Imprime en consola:
 ;;             INFORME DE DISTRIBUCION TEMPORAL (1 HORA):
-;;             ROJO: 41.67%
-;;             VERDE: 55.56%
-;;             AMARILLO: 2.78%
+;;             ROJO: 46.88%
+;;             VERDE: 31.25%
+;;             AMARILLO: 7.81%
+;;             TRANSICIONES: 14.06%
 
-;; Caso de Error: datos no numéricos
-(informe-distribucion 90 'cien 6)
+
+;; Caso de Error: Uno de los parámetros de color no es numérico
+
+(informe-distribucion-IT2 30 'veinte 5)
 ;; Esperado -> Imprime en consola:
-;;             Error: Todas las duraciones de los colores deben ser numeros.
+;;             Error: Todos los argumentos deben ser numeros.
+
+
+;; ==========================================
+;; EXTENSION 2: PERSISTENCIA - informe-IT2
+;; ==========================================
+
+;; Camino Normal: 
+(informe-IT2 '(("[2026-06-14 22:55:10]" ROJO ROJO-INTERMITENTE) ("[2026-06-14 22:55:11]" ROJO-INTERMITENTE VERDE)))
+;; Esperado -> "Informe generado con éxito en 'C:/Segundo anio/integrador/informe-ejecucion-semaforo.txt'"
+
+
+;; Camino Normal:
+(informe-it2 (auditoria-it2 'rojo 1 1 1 10))
+;; Esperado -> "Informe generado con éxito en 'C:/Segundo anio/integrador/informe-ejecucion-semaforo.txt'"
+
+
+;; Caso de Error: 
+(informe-IT2 nil)
+;; Esperado -> "Error: No hay datos para generar el informe."
+
 
 
 
 ;; =============================================================================================================================
-;;                                     PRUEBAS ADICIONALES: FUNCIONES AUXILIARES
+;;                                            PRUEBAS ADICIONALES: FUNCIONES AUXILIARES
 ;; =============================================================================================================================
 
 ;; ==========================================
-;; PRUEBAS: AUXILIAR 1 - duracion-ciclo
+;; PRUEBAS: AUXILIAR 1 - duracion-ciclo-IT2
 ;; ==========================================
 
-;; Camino Normal: Cálculo correcto con los tiempos clásicos de la Fase 1 (90 + 120 + 6)
-(duracion-ciclo 90 120 6)
-;; Esperado -> 216
+;; Camino Normal: Suma de focos base más los 9 segundos fijos de márgenes de seguridad vial (30 + 20 + 5 + 9)
+(duracion-ciclo-IT2 30 20 5)
+;; Esperado -> 64
 
-;; Camino Alternativo: Tiempos de ciclo reducidos o de prueba
-(duracion-ciclo 10 20 5)
-;; Esperado -> 35
-
-;; Caso de Error: Uno de los argumentos es un símbolo (no numérico)
-(duracion-ciclo 90 'verde 6)
-;; Esperado -> NIL
-
-;; Caso de Error: Se omiten datos pasando NIL
-(duracion-ciclo nil 120 6)
+;; Caso de Error: Presencia de un elemento simbólico en los argumentos viales
+(duracion-ciclo-IT2 30 'veinte 5)
 ;; Esperado -> NIL
 
 
@@ -503,45 +539,41 @@
 ;; PRUEBAS: AUXILIAR 2 - obtener-timestamp
 ;; ==========================================
 
-;; Camino Normal: Retorna un número entero grande (segundos transcurridos desde 1978)
+;; Camino Normal: Retorna el timestamp de Unix calculado matemáticamente de forma pura desde la época base
 (obtener-timestamp)
-;; Esperado -> Un entero (Ej: 151381242)
+;; Esperado -> Un entero largo (Ej: 1781477710)
 
 
 ;; ==========================================
-;; PRUEBAS: AUXILIAR 3 - convertir-color
+;; PRUEBAS: AUXILIAR 3 - obtener-timestamp-humano
 ;; ==========================================
 
-;; Camino Normal: Mapeo directo del símbolo 'rojo al estado de la máquina 'en-rojo
-(convertir-color 'rojo)
-;; Esperado -> EN-ROJO
+;; Camino Normal: Retorna la cadena de fecha y hora ajustada -3 horas al huso local de forma pura e inmutable
+(obtener-timestamp-humano)
+;; Esperado -> Un String formateado (Ej: "2026-06-14 22:55:10")
 
-;; Camino Alternativo: Mapeo de otro color elemental ('verde)
-(convertir-color 'verde)
+
+;; ==========================================
+;; PRUEBAS: AUXILIAR 4 - convertir-color-IT2
+;; ==========================================
+
+;; Camino Normal: Mapeo de un color elemental a su nomenclatura interna de estado vial
+(convertir-color-IT2 'rojo-intermitente)
+;; Esperado -> EN-ROJO-INTERMITENTE
+
+;; Camino Alternativo: Si el color ya se encuentra formateado, lo retorna intacto por la rama por defecto
+(convertir-color-IT2 'en-verde)
 ;; Esperado -> EN-VERDE
 
-;; Camino Alternativo: Si ya recibe el formato final 'en-amarillo, lo mantiene igual (rama 't' del cond)
-(convertir-color 'en-amarillo)
-;; Esperado -> EN-AMARILLO
-
-
 
 ;; ==========================================
-;; PRUEBAS: AUXILIAR 4 - validar-transiciones-p
+;; PRUEBAS: AUXILIAR 5 - validar-transiciones-p-IT2
 ;; ==========================================
 
-;; Camino Normal: Transición vial reglamentaria de Verde a Amarillo
-(validar-transiciones-p 'en-verde 'amarillo)
+;; Camino Normal: Transición reglamentaria permitida por la máquina de estados
+(validar-transiciones-p-IT2 'en-verde 'verde-intermitente)
 ;; Esperado -> T
 
-;; Camino Alternativo: Transición vial reglamentaria de Amarillo a Rojo
-(validar-transiciones-p 'en-amarillo 'rojo)
-;; Esperado -> T
-
-;; Caso de Error: Transición peligrosa/inválida directa de Verde a Rojo (Debería bloquearse)
-(validar-transiciones-p 'en-verde 'rojo)
-;; Esperado -> NIL
-
-;; Caso de Error: El color actual no usa el prefijo "en-" esperado por la máquina de estados
-(validar-transiciones-p 'rojo 'verde)
+;; Caso de Error: Transición directa prohibida por seguridad por saltearse la fase intermitente
+(validar-transiciones-p-IT2 'en-rojo 'verde)
 ;; Esperado -> NIL
