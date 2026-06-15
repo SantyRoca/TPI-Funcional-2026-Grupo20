@@ -63,6 +63,32 @@
     (and (= color-actual :en-amarillo-intermitente) (= cambiar-a :rojo)) true
     :else false))
 
+
+;; =============================================================================================================================
+;;                                           REQUERIMIENTO 2 - FASE 3 CLOJURE
+;; =============================================================================================================================
+
+;; ========================================================
+;; FUNCIÓN: timer
+;; NATURALEZA: Pura (Cálculo determinista basado en tramos de tiempo)
+;; ESTRATEGIA: Condicional 
+;; IMPACTO: No destructiva
+;; ========================================================
+
+(defn timer [ts duracion-rojo duracion-verde duracion-amarillo]
+    (let [ciclo (duracion-ciclo duracion-rojo duracion-verde duracion-amarillo)]
+        (cond
+              (or (not (number? ts)) (not ciclo)) :falla-sistema ; En caso de que alguna duracion no sea numerica y que el 
+              (< (mod ts ciclo) duracion-rojo) :rojo
+              (< (mod ts ciclo) (+ duracion-rojo 3)) :rojo-intermitente
+              (< (mod ts ciclo) (+ duracion-rojo 3 duracion-verde)) :verde
+              (< (mod ts ciclo) (+ duracion-rojo duracion-verde 6)) :verde-intermitente
+              (< (mod ts ciclo) (+ duracion-rojo duracion-verde duracion-amarillo 6)) :amarillo
+              :else :amarillo-intermitente)
+        )
+)
+
+
 ;; =============================================================================================================================
 ;;                                           REQUERIMIENTO 1 - FASE 3 CLOJURE
 ;; =============================================================================================================================
