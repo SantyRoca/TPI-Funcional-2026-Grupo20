@@ -53,7 +53,7 @@
 (defun obtener-timestamp-humano ()
   ;Devuelve la fecha y hora actual en el uso horario local en un formato legible string: YYYY-MM-DD HH:MM:SS
   (local-time:format-timestring nil 
-    (local-time:timestamp- (local-time:now) 3 :hour) ;; <-- Restamos 3 horas puramente al vuelo
+    (local-time:timestamp- (local-time:now) 3 :hour) ;; <-- Restamos 3 horas 
     :format '((:year 4) #\- (:month 2) #\- (:day 2) " " (:hour 2) #\: (:min 2) #\: (:sec 2)))
 )
 

@@ -78,7 +78,7 @@
 (defn timer [ts duracion-rojo duracion-verde duracion-amarillo]
     (let [ciclo (duracion-ciclo duracion-rojo duracion-verde duracion-amarillo)]
         (cond
-              (or (not (number? ts)) (not ciclo)) :falla-sistema ; En caso de que alguna duracion no sea numerica y que el 
+              (or (not (number? ts)) (not ciclo)) :falla-sistema ; En caso de que alguna duracion no sea numerica o el timestamp tampoco lo sea
               (< (mod ts ciclo) duracion-rojo) :rojo
               (< (mod ts ciclo) (+ duracion-rojo 3)) :rojo-intermitente
               (< (mod ts ciclo) (+ duracion-rojo 3 duracion-verde)) :verde
