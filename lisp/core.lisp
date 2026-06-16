@@ -291,20 +291,13 @@
 ;; FUNCIÓN AUXILIAR RECURSIVA
 (defun escribir-lineas-informe-IT2 (lista-datos stream)
   (cond 
-
     ((null lista-datos) t)
-    
-
     (t 
       (let* ((registro-actual (car lista-datos))
              (timestamp (first registro-actual)) ; le paso la fecha y hora
              (anterior  (second registro-actual)) ; le paso el color anterior
              (nuevo     (third registro-actual))) ; le paso el color nuevo 
-        
-
         (format stream "~a - Transición: ~a -> ~a~%" timestamp anterior nuevo)
-        
-
         (escribir-lineas-informe-IT2 (cdr lista-datos) stream)
       )
     )
