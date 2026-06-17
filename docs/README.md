@@ -20,7 +20,7 @@ link: https://youtu.be/DzqL5INa3Ww
 El repositorio está organizado siguiendo la arquitectura requerida por la cátedra:
 
 ```text
-TPI-Funcional-2026-Grupo-26/
+TPI-Funcional-2026-Grupo-20
 ├── lisp/
 │   └── core.lisp     <-- Código de los requerimientos 1 al 6 en Common Lisp
 ├── comparativa/
