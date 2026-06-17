@@ -1,4 +1,4 @@
-👤 Integrante 1: [Santiago Nicolas Roca] - Usuario GitHub: [SantyRoca]
+👤 Integrante: [Santiago Nicolas Roca] - Usuario GitHub: [SantyRoca]
 
 1. Código en Common Lisp (Fase 1 y 2)
 ●	[ ] Desarrollo 100% Humano: El código fue diseñado, escrito y depurado puramente por mí/el grupo sin intervención de IA.
