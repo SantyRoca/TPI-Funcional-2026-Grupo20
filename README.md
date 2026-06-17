@@ -25,6 +25,7 @@ TPI-Funcional-2026-Grupo-26/
 │   └── core.lisp     <-- Código de los requerimientos 1 al 6 en Common Lisp
 ├── comparativa/
 │   └── solucion.clj  <-- Reimplementación de transicion y timer en Clojure 
-└── docs/
-    ├── INFORME.pdf   <-- Informe técnico y respuestas analíticas de Fase 3 
-    └── HONOR.md      <-- Declaración obligatoria de Código de Honor
+├── docs/
+│   ├── INFORME.pdf           <-- Informe conceptual con las respuestas analíticas
+│   └── HONOR.md              <-- Declaración obligatoria de Código de Honor
+└── README.md                 <-- Portada del repositorio y enlaces a los videos
