@@ -9,19 +9,19 @@
 
 
 ;; =============================================================================================================================
-;;                                               FUNCIONES AUXILIARES
+;;                                                   FUNCIONES AUXILIARES
 ;; =============================================================================================================================
 
 
 ;; =============================================================================================================================
-;; FUNCIÓN: duracion-ciclo-IT2
+;; FUNCIÓN: duracion-ciclo
 ;; NATURALEZA: Pura (No genera efectos secundarios y ante los mismos argumentos siempre devuelve el mismo resultado)
 ;; ESTRATEGIA: Función Condicional (Utiliza una bifurcación 'if' para validar tipos y calcular la ventana de tiempo del ciclo)
 ;; IMPACTO: No Destructiva (Efectúa adiciones numéricas elementales agregando los 9 segundos de margen de seguridad vial)
 ;; =============================================================================================================================
 
 
-(defun duracion-ciclo-IT2 (duracion_rojo duracion_verde duracion_amarillo)
+(defun duracion-ciclo (duracion_rojo duracion_verde duracion_amarillo)
   (if (and (numberp duracion_rojo) (numberp duracion_verde) (numberp duracion_amarillo)) ; Valida que los segundos de los 3 colores sean numericos
       (+ duracion_rojo duracion_verde duracion_amarillo 9)                               ; realiza la suma para tener el total en un ciclo + 9 que es la suma de los 3 intermitentes
       nil)                                                                               ; devuelve nil en caso de que los segundos alguno de los 3 colores no sea numerico
@@ -51,7 +51,6 @@
 ;; =============================================================================================================================
 
 (defun obtener-timestamp-humano ()
-  ;Devuelve la fecha y hora actual en el uso horario local en un formato legible string: YYYY-MM-DD HH:MM:SS
   (local-time:format-timestring nil 
     (local-time:timestamp- (local-time:now) 3 :hour) ;; <-- Restamos 3 horas 
     :format '((:year 4) #\- (:month 2) #\- (:day 2) " " (:hour 2) #\: (:min 2) #\: (:sec 2)))
@@ -60,14 +59,14 @@
 
 
 ;; =============================================================================================================================
-;; FUNCIÓN: convertir-color-IT2
+;; FUNCIÓN: convertir-color
 ;; NATURALEZA: Pura (Establece una traducción determinista de símbolos aislada de variables globales y de operaciones de E/S)
 ;; ESTRATEGIA: Función Condicional (Estructurada mediante un bloque condicional múltiple 'cond' para mapear la red de focos)
 ;; IMPACTO: No Destructiva (Retorna referencias simbólicas estáticas sin mutar bajo ningún concepto el argumento de origen)
 ;; =============================================================================================================================
 
 
-(defun convertir-color-IT2 (color)
+(defun convertir-color (color)
     (cond
         ((equal color 'rojo) 'en-rojo)
         ((equal color 'rojo-intermitente) 'en-rojo-intermitente)
@@ -84,14 +83,14 @@
 
 
 ;; =============================================================================================================================
-;; FUNCIÓN: validar-transiciones-p-IT2
+;; FUNCIÓN: validar-transiciones-p
 ;; NATURALEZA: Pura (Actúa como predicado lógico determinista analizando exclusivamente los valores de sus argumentos)
 ;; ESTRATEGIA: Función Predicado (Utiliza combinadores booleanos de control secuencial 'and' para validar la seguridad vial)
 ;; IMPACTO: No Destructiva (Devuelve literales booleanos T o NIL sin realizar reasignaciones ni alterar la memoria)
 ;; =============================================================================================================================
 
 
-(defun validar-transiciones-p-IT2 (color-actual cambiar-a)
+(defun validar-transiciones-p (color-actual cambiar-a)
     (cond
         ((and (equal color-actual 'en-rojo) (equal cambiar-a 'rojo-intermitente))           t)
         ((and (equal color-actual 'en-rojo-intermitente) (equal cambiar-a 'verde))          t)
@@ -109,20 +108,20 @@
 
 
 ;; =============================================================================================================================
-;;                                           REQUERIMIENTO 1 - IT2
+;;                                               REQUERIMIENTO 1
 ;; =============================================================================================================================
 
 
 ;; =============================================================================================================================
-;; FUNCIÓN: transicion-IT2
+;; FUNCIÓN: transicion
 ;; NATURALEZA: Pura (Modela las transiciones válidas de la máquina de estados abstracta sin interactuar con agentes externos)
 ;; ESTRATEGIA: Función Condicional (Evalúa la seguridad de la mutación mediante una llamada al predicado de control vial)
 ;; IMPACTO: No Destructiva (Construye una nueva estructura de lista dinámica en memoria mediante el uso de 'list' y 'format')
 ;; =============================================================================================================================
 
 
-(defun transicion-IT2 (color-actual cambiar-a)
-    (if (validar-transiciones-p-IT2 color-actual cambiar-a)
+(defun transicion (color-actual cambiar-a)
+    (if (validar-transiciones-p color-actual cambiar-a)
       (list color-actual (format nil "cambiar-a-~a" cambiar-a))
       (list color-actual 'accion-por-defecto)
     )
@@ -132,19 +131,19 @@
 
 
 ;; =============================================================================================================================
-;;                                           REQUERIMIENTO 2 - IT2
+;;                                              REQUERIMIENTO 2
 ;; =============================================================================================================================
 
 ;; =============================================================================================================================
-;; FUNCIÓN: timer-IT2
+;; FUNCIÓN: timer
 ;; NATURALEZA: Pura (Procesa proyecciones del estado de luces matemáticamente a partir de parámetros de tiempo inmutables)
 ;; ESTRATEGIA: Función Condicional (Utiliza congruencia aritmética mediante 'mod' para segmentar secuencialmente las fases)
 ;; IMPACTO: No Destructiva (Instancia un entorno local mediante 'let' que se libera automáticamente al salir del ámbito)
 ;; =============================================================================================================================
 
 
-(defun timer-IT2 (ts duracion_rojo duracion_verde duracion_amarillo)
-    (let ((ciclo (duracion-ciclo-IT2 duracion_rojo duracion_verde duracion_amarillo) )) 
+(defun timer (ts duracion_rojo duracion_verde duracion_amarillo)
+    (let ((ciclo (duracion-ciclo duracion_rojo duracion_verde duracion_amarillo) )) 
         (cond
             ((or (not ciclo) (not (numberp ts))) "Error datos no numericos")
             ((< (mod ts ciclo) duracion_rojo)                                           'rojo) 
@@ -160,11 +159,11 @@
 
 
 ;; =============================================================================================================================
-;;                                           REQUERIMIENTO 3 - IT2
+;;                                               REQUERIMIENTO 3
 ;; =============================================================================================================================
 
 ;; =============================================================================================================================
-;; FUNCIÓN: auditoria-IT2
+;; FUNCIÓN: auditoria
 ;; NATURALEZA: Impura (Provoca efectos secundarios secuenciales en la salida estándar e introduce retardos mediante 'sleep')
 ;; ESTRATEGIA: Función Recursiva (Genera un flujo acumulativo no destructivo evaluando transiciones viales cronológicas)
 ;; IMPACTO: No Destructiva (Preserva la inmutabilidad de datos usando el constructor 'cons' para construir la pila de registros)
@@ -172,26 +171,26 @@
 
 
 
-(defun auditoria-IT2 (color-anterior duracion_rojo duracion_verde duracion_amarillo cambios)
+(defun auditoria (color-anterior duracion_rojo duracion_verde duracion_amarillo cambios)
 
-    (let* ((color-nuevo (timer-IT2 (obtener-timestamp) duracion_rojo duracion_verde duracion_amarillo))
+    (let* ((color-nuevo (timer (obtener-timestamp) duracion_rojo duracion_verde duracion_amarillo))
            (colores-validos '(rojo rojo-intermitente verde verde-intermitente amarillo amarillo-intermitente)))
         (cond
             ((or
                 (stringp color-anterior)
-                (not (duracion-ciclo-IT2 duracion_rojo duracion_verde duracion_amarillo)) 
+                (not (duracion-ciclo duracion_rojo duracion_verde duracion_amarillo)) 
                 (not (numberp cambios)) 
                 (not (member color-anterior colores-validos))) "Error: No se puede iniciar la auditoria con datos invalidos")
 
             ((= cambios 0) nil) ;finalizacion de mi funcion recursiva
 
-            ((validar-transiciones-p-IT2 (convertir-color-IT2 color-anterior) color-nuevo) ;Caso de encontrar una transicion
+            ((validar-transiciones-p (convertir-color color-anterior) color-nuevo) ;Caso de encontrar una transicion
                 (sleep 1)
                 (cons (list (format nil "[~a]" (obtener-timestamp-humano)) color-anterior color-nuevo) 
-                    (auditoria-IT2 color-nuevo duracion_rojo duracion_verde duracion_amarillo (- cambios 1)))
+                    (auditoria color-nuevo duracion_rojo duracion_verde duracion_amarillo (- cambios 1)))
             )
             (t  (sleep 1) ; caso para volver a llamarse
-                (auditoria-IT2 color-anterior duracion_rojo duracion_verde duracion_amarillo cambios)) 
+                (auditoria color-anterior duracion_rojo duracion_verde duracion_amarillo cambios)) 
         )
     )
 )
@@ -199,7 +198,7 @@
 
 
 ;; =============================================================================================================================
-;;                                           REQUERIMIENTO 4 - IT2
+;;                                               REQUERIMIENTO 4
 ;; =============================================================================================================================
 
 ;; =============================================================================================================================
@@ -222,7 +221,7 @@
 
 
 ;; =============================================================================================================================
-;;                                           REQUERIMIENTO 5 - IT2
+;;                                              REQUERIMIENTO 5
 ;; =============================================================================================================================
 
 ;; =============================================================================================================================
@@ -235,31 +234,31 @@
 
 (defun ciclos-por-tiempo (minutos duracion_rojo duracion_verde duracion_amarillo)
 
-    (if (and (numberp minutos) (duracion-ciclo-IT2 duracion_rojo duracion_verde duracion_amarillo))
+    (if (and (numberp minutos) (duracion-ciclo duracion_rojo duracion_verde duracion_amarillo))
         (let ( (minutos-en-seg (* minutos 60)) )
-            (truncate minutos-en-seg (duracion-ciclo-IT2 duracion_rojo duracion_verde duracion_amarillo))
+            (truncate minutos-en-seg (duracion-ciclo duracion_rojo duracion_verde duracion_amarillo))
         )
       "Error: datos no numericos")
 )
 
 
 ;; =============================================================================================================================
-;;                                           REQUERIMIENTO 6 - IT2
+;;                                               REQUERIMIENTO 6
 ;; =============================================================================================================================
 
 ;; =============================================================================================================================
-;; FUNCIÓN: informe-distribucion-IT2
+;; FUNCIÓN: informe-distribucion
 ;; NATURALEZA: Impura (Genera efectos colaterales de salida visual escribiendo el reporte en la consola estándar del REPL)
 ;; ESTRATEGIA: Función Simple (Calcula y encadena ratios porcentuales de tiempos viales mediante el constructor léxico 'let*')
 ;; IMPACTO: No Destructiva (Transmite los datos procesados al flujo de salida sin corromper ni reasignar las variables base)
 ;; =============================================================================================================================
 
 
-(defun informe-distribucion-IT2 (duracion_rojo duracion_verde duracion_amarillo)
+(defun informe-distribucion (duracion_rojo duracion_verde duracion_amarillo)
     (if (and (numberp duracion_rojo) (numberp duracion_verde) (numberp duracion_amarillo))
         (let* (
                ; realizo los calculos para sacar el porcentaje que aparece cada color en una hora
-                (total_ciclo (duracion-ciclo-IT2 duracion_rojo duracion_verde duracion_amarillo))
+                (total_ciclo (duracion-ciclo duracion_rojo duracion_verde duracion_amarillo))
                 (pct-rojo (* (/ duracion_rojo total_ciclo) 100.0))
                 (pct-amarillo (* (/ duracion_amarillo total_ciclo) 100.0))
                 (pct-verde (* (/ duracion_verde total_ciclo) 100.0))
@@ -278,18 +277,19 @@
 )
 
 ;; =============================================================================================================================
-;;                                       EXTENSION 2: PERSISTENCIA DE DATOS (INFORME)
+;;                                       EXTENSION 2: (INFORME)
 ;; =============================================================================================================================
 
 ;; =============================================================================================================================
-;; FUNCIÓN: escribir-lineas-informe-IT2
+;; FUNCIÓN: escribir-lineas-informe
 ;; NATURALEZA: Impura (Provoca efectos secundarios en el sistema de archivos al escribir líneas de texto mediante un Stream)
 ;; ESTRATEGIA: Función Recursiva de Cola (Itera sobre los nodos de la lista procesando el 'car' y delegando el 'cdr' en posición final)
 ;; IMPACTO: No Destructiva (Navega los registros de auditoría de forma lineal sin emplear bucles imperativos destructivos)
 ;; =============================================================================================================================
 
-;; FUNCIÓN AUXILIAR RECURSIVA
-(defun escribir-lineas-informe-IT2 (lista-datos stream)
+;; FUNCIÓN AUXILIAR
+
+(defun escribir-lineas-informe (lista-datos stream)
   (cond 
     ((null lista-datos) t)
     (t 
@@ -298,7 +298,7 @@
              (anterior  (second registro-actual)) ; le paso el color anterior
              (nuevo     (third registro-actual))) ; le paso el color nuevo 
         (format stream "~a - Transición: ~a -> ~a~%" timestamp anterior nuevo)
-        (escribir-lineas-informe-IT2 (cdr lista-datos) stream)
+        (escribir-lineas-informe (cdr lista-datos) stream)
       )
     )
   )
@@ -306,14 +306,14 @@
 
 
 ;; =============================================================================================================================
-;; FUNCIÓN: informe-IT2
+;; FUNCIÓN: informe
 ;; NATURALEZA: Impura (Establece comunicación directa con el disco duro externo abriendo, mutando y sobreescribiendo un archivo)
 ;; ESTRATEGIA: Función Ensambladora (Utiliza la macro funcional 'with-open-file' para asegurar un flujo y cierre de stream seguro)
 ;; IMPACTO: No Destructiva (Lee la lista de logs históricos de manera pasiva sin alterar el estado de sus sublistas internas)
 ;; =============================================================================================================================
 
 
-(defun informe-IT2 (datos)
+(defun informe (datos)
   (if (null datos)
       "Error: No hay datos para generar el informe."
 
@@ -325,7 +325,7 @@
         (format stream "Informe de Ejecución del Sistema Semafórico~%")
         (format stream "=========================================~%")
         
-        (escribir-lineas-informe-IT2 datos stream)
+        (escribir-lineas-informe datos stream)
         
         (format stream "~%--- Fin del Informe ---")
         "Informe generado con éxito en 'C:/Segundo anio/integrador/informe-ejecucion-semaforo.txt'"
@@ -367,64 +367,66 @@
 
 
 
+
+
 ;; =============================================================================================================================
 ;;                                           REQUERIMIENTO 7: ASEGURAMIENTO DE LA CALIDAD
 ;; =============================================================================================================================
 
 ;; ==========================================
-;; PRUEBAS: REQUERIMIENTO 1 - transicion-IT2
+;; PRUEBAS: REQUERIMIENTO 1 - transicion
 ;; ==========================================
 
-;; Camino Normal: Transición válida de Rojo a su siguiente fase de intermitencia
-(transicion-IT2 'en-rojo 'rojo-intermitente)
+;; Camino Normal:
+(transicion 'en-rojo 'rojo-intermitente)
 ;; Esperado -> (EN-ROJO "cambiar-a-rojo-intermitente")
 
 
-;; Camino Alternativo: Transición válida de Verde Intermitente a Amarillo
-(transicion-IT2 'en-verde-intermitente 'amarillo)
+;; Camino Alternativo: 
+(transicion 'en-verde-intermitente 'amarillo)
 ;; Esperado -> (EN-VERDE-INTERMITENTE "cambiar-a-amarillo")
 
 
-;; Caso de Error: Intento de transición inválida directa (saltearse la intermitencia)
-(transicion-IT2 'en-rojo 'verde)
+;; Caso de Error: 
+(transicion 'en-rojo 'verde)
 ;; Esperado -> (EN-ROJO ACCION-POR-DEFECTO)
 
 
 
 ;; ==========================================
-;; PRUEBAS: REQUERIMIENTO 2 - timer-IT2
+;; PRUEBAS: REQUERIMIENTO 2 - timer
 ;; ==========================================
 
 
 ;; Camino Normal:
-(timer-IT2 (obtener-timestamp) 30 20 5)
+(timer (obtener-timestamp) 30 20 5)
 
 
-;; Caso de Error: Datos alfanuméricos en el Timestamp actual
-(timer-IT2 'times 30 20 5)
+;; Caso de Error:
+(timer 'times 30 20 5)
 ;; Esperado -> "Error datos no numericos"
 
 
-;; Caso de Error: Configuraciones de tiempos pasadas como símbolos
-(timer-IT2 10 30 'veinte 5)
+;; Caso de Error: 
+(timer 10 30 'veinte 5)
 ;; Esperado -> "Error datos no numericos"
 
 
 ;; ==========================================
-;; PRUEBAS: REQUERIMIENTO 3 - auditoria-IT2
+;; PRUEBAS: REQUERIMIENTO 3 - auditoria
 ;; ==========================================
 
 
-;; Camino Normal: Inicio de auditoría recursiva con color base válido capturando 3 transiciones del reloj
-(auditoria-IT2 'rojo 30 20 5 3)
+;; Camino Normal: 
+(auditoria 'rojo 30 20 5 3)
 ;; Esperado ->   (("[fecha-actual hora-actual]" ROJO ROJO-INTERMITENTE) ("[fecha-actual hora-actual]" ROJO-INTERMITENTE VERDE) ...)
 
-;; Camino alternativo: utilizar la funcion timer para pasar el color que esta prendido ahora mismo
-(auditoria-IT2 (timer-IT2 (obtener-timestamp) 30 20 5) 30 20 5 3)
+;; Camino alternativo: 
+(auditoria (timer (obtener-timestamp) 30 20 5) 30 20 5 3)
 ;; Esperado -> "Error: No se puede iniciar la auditoria con datos invalidos"
 
-;; Caso de Error: El argumento de cantidad de cambios no es un valor numérico entero
-(auditoria-IT2 'verde 30 20 5 'tres)
+;; Caso de Error: 
+(auditoria 'verde 30 20 5 'tres)
 ;; Esperado -> "Error: No se puede iniciar la auditoria con datos invalidos"
 
 
@@ -432,23 +434,23 @@
 ;; PRUEBAS: REQUERIMIENTO 4 - recomendacion-ciclo
 ;; ==========================================
 
-;; Camino Normal: Evaluación dinámica calculando la duración real de tu ciclo (30+20+5 + 9s intermitencias = 64s)
-(recomendacion-ciclo (duracion-ciclo-IT2 30 20 5))
+;; Camino Normal:
+(recomendacion-ciclo (duracion-ciclo 30 20 5))
 ;; Esperado -> "Recomendacion: la duracion del ciclo es optima, no se requieren cambios."
 
-;; Camino Alternativo: Envío directo de una métrica de tiempo óptima dentro del rango (35-150s)
+;; Camino Alternativo: 
 (recomendacion-ciclo 90)
 ;; Esperado -> "Recomendacion: la duracion del ciclo es optima, no se requieren cambios."
 
-;; Camino Alternativo: Ciclo excesivamente bajo que compromete la fluidez (Menor a 35 segundos)
+;; Camino Alternativo: 
 (recomendacion-ciclo 25)
 ;; Esperado -> "Recomendacion: aumentar la duracion del ciclo para mejorar la fluidez"
 
-;; Camino Alternativo: Ciclo excesivamente alto que genera demora (Mayor a 150 segundos)
+;; Camino Alternativo: 
 (recomendacion-ciclo 180)
 ;; Esperado -> "Recomendacion: reducir la duracion del ciclo para evitar la frustracion"
 
-;; Caso de Error: El tipo de dato suministrado no es un número
+;; Caso de Error: 
 (recomendacion-ciclo 'noventa)
 ;; Esperado -> "Error: el tipo de ciclo suministrado no es valido."
 
@@ -457,25 +459,25 @@
 ;; PRUEBAS: REQUERIMIENTO 5 - ciclos-por-tiempo
 ;; ==========================================
 
-;; Camino Normal: Proyección de ciclos completos en una hora (60 min) sobre un ciclo de 64s (3600s / 64s)
+;; Camino Normal:
 (ciclos-por-tiempo 60 30 20 5)
 ;; Esperado -> 56
 
-;; Camino Alternativo: Tiempo exacto que equivale de forma matemática a un único ciclo (1.066 minutos)
+;; Camino Alternativo: 
 (ciclos-por-tiempo 1 30 20 1)
 ;; Esperado -> 1
 
-;; Caso de Error: Envío del parámetro temporal en formato String
+;; Caso de Error: 
 (ciclos-por-tiempo "60" 30 20 5)
 ;; Esperado -> "Error: datos no numericos"
 
 
 ;; ==========================================
-;; PRUEBAS: REQUERIMIENTO 6 - informe-distribucion-IT2
+;; PRUEBAS: REQUERIMIENTO 6 - informe-distribucion
 ;; ==========================================
 
-;; Camino Normal: Generación y salida por REPL de los porcentajes incluyendo los 9s de transiciones intermitentes
-(informe-distribucion-IT2 30 20 5)
+;; Camino Normal:
+(informe-distribucion 30 20 5)
 ;; Esperado -> Imprime en consola:
 ;;             INFORME DE DISTRIBUCION TEMPORAL (1 HORA):
 ;;             ROJO: 46.88%
@@ -486,27 +488,26 @@
 
 ;; Caso de Error: Uno de los parámetros de color no es numérico
 
-(informe-distribucion-IT2 30 'veinte 5)
-;; Esperado -> Imprime en consola:
-;;             Error: Todos los argumentos deben ser numeros.
+(informe-distribucion 30 'veinte 5)
+;; Esperado -> Error: Todos los argumentos deben ser numeros.
 
 
 ;; ==========================================
-;; EXTENSION 2: PERSISTENCIA - informe-IT2
+;; EXTENSION 2: PERSISTENCIA - informe
 ;; ==========================================
 
 ;; Camino Normal: 
-(informe-IT2 '(("[2026-06-14 22:55:10]" ROJO ROJO-INTERMITENTE) ("[2026-06-14 22:55:11]" ROJO-INTERMITENTE VERDE)))
+(informe '(("[2026-06-14 22:55:10]" ROJO ROJO-INTERMITENTE) ("[2026-06-14 22:55:11]" ROJO-INTERMITENTE VERDE)))
 ;; Esperado -> "Informe generado con éxito en 'C:/Segundo anio/integrador/informe-ejecucion-semaforo.txt'"
 
 
 ;; Camino Normal:
-(informe-it2 (auditoria-it2 'rojo 1 1 1 10))
+(informe (auditoria 'rojo 1 1 1 10))
 ;; Esperado -> "Informe generado con éxito en 'C:/Segundo anio/integrador/informe-ejecucion-semaforo.txt'"
 
 
 ;; Caso de Error: 
-(informe-IT2 nil)
+(informe nil)
 ;; Esperado -> "Error: No hay datos para generar el informe."
 
 
@@ -517,15 +518,15 @@
 ;; =============================================================================================================================
 
 ;; ==========================================
-;; PRUEBAS: AUXILIAR 1 - duracion-ciclo-IT2
+;; PRUEBAS: AUXILIAR 1 - duracion-ciclo
 ;; ==========================================
 
-;; Camino Normal: Suma de focos base más los 9 segundos fijos de márgenes de seguridad vial (30 + 20 + 5 + 9)
-(duracion-ciclo-IT2 30 20 5)
+;; Camino Normal:
+(duracion-ciclo 30 20 5)
 ;; Esperado -> 64
 
-;; Caso de Error: Presencia de un elemento simbólico en los argumentos viales
-(duracion-ciclo-IT2 30 'veinte 5)
+;; Caso de Error:
+(duracion-ciclo 30 'veinte 5)
 ;; Esperado -> NIL
 
 
@@ -533,7 +534,7 @@
 ;; PRUEBAS: AUXILIAR 2 - obtener-timestamp
 ;; ==========================================
 
-;; Camino Normal: Retorna el timestamp de Unix calculado matemáticamente de forma pura desde la época base
+;; Camino Normal:
 (obtener-timestamp)
 ;; Esperado -> Un entero largo (Ej: 1781477710)
 
@@ -542,32 +543,32 @@
 ;; PRUEBAS: AUXILIAR 3 - obtener-timestamp-humano
 ;; ==========================================
 
-;; Camino Normal: Retorna la cadena de fecha y hora ajustada -3 horas al huso local de forma pura e inmutable
+;; Camino Normal:
 (obtener-timestamp-humano)
-;; Esperado -> Un String formateado (Ej: "2026-06-14 22:55:10")
+;; Esperado ->(Ej: "2026-06-14 22:55:10")
 
 
 ;; ==========================================
-;; PRUEBAS: AUXILIAR 4 - convertir-color-IT2
+;; PRUEBAS: AUXILIAR 4 - convertir-color
 ;; ==========================================
 
-;; Camino Normal: Mapeo de un color elemental a su nomenclatura interna de estado vial
-(convertir-color-IT2 'rojo-intermitente)
+;; Camino Normal:
+(convertir-color 'rojo-intermitente)
 ;; Esperado -> EN-ROJO-INTERMITENTE
 
-;; Camino Alternativo: Si el color ya se encuentra formateado, lo retorna intacto por la rama por defecto
-(convertir-color-IT2 'en-verde)
+;; Camino Alternativo:
+(convertir-color 'en-verde)
 ;; Esperado -> EN-VERDE
 
 
 ;; ==========================================
-;; PRUEBAS: AUXILIAR 5 - validar-transiciones-p-IT2
+;; PRUEBAS: AUXILIAR 5 - validar-transiciones-p
 ;; ==========================================
 
-;; Camino Normal: Transición reglamentaria permitida por la máquina de estados
-(validar-transiciones-p-IT2 'en-verde 'verde-intermitente)
+;; Camino Normal:
+(validar-transiciones-p 'en-verde 'verde-intermitente)
 ;; Esperado -> T
 
-;; Caso de Error: Transición directa prohibida por seguridad por saltearse la fase intermitente
-(validar-transiciones-p-IT2 'en-rojo 'verde)
+;; Caso de Error:
+(validar-transiciones-p 'en-rojo 'verde)
 ;; Esperado -> NIL
