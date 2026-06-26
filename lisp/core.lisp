@@ -248,12 +248,12 @@
 
 (defun escribir-lineas-informe (lista-datos stream)
   (cond ((null lista-datos) t)
-        (t (let ((registro-actual (car lista-datos)))
-             (let ((timestamp (car registro-actual)) ; le paso la fecha y hora
-                   (anterior  (cadr registro-actual)) ; le paso el color anterior   
-                   (nuevo     (caddr registro-actual))) ; le paso el color nuevo 
-               (format stream "~a - Transición: ~a -> ~a~%" timestamp anterior nuevo)
-               (escribir-lineas-informe (cdr lista-datos) stream))))))
+        (t (let* ((registro-actual (car lista-datos))
+                 (timestamp (car registro-actual))   ; le paso la fecha y hora
+                 (anterior (cadr registro-actual))  ; le paso el color anterior   
+                 (nuevo (caddr registro-actual))) ; le paso el color nuevo 
+              (format stream "~a - Transición: ~a -> ~a~%" timestamp anterior nuevo)
+              (escribir-lineas-informe (cdr lista-datos) stream)))))
 
 
 ;;; =============================================================================================================================

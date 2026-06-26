@@ -76,17 +76,15 @@
 ;; ========================================================
 
 (defn timer [ts duracion-rojo duracion-verde duracion-amarillo]
-    (let [ciclo (duracion-ciclo duracion-rojo duracion-verde duracion-amarillo)]
-        (cond
-              (or (not (number? ts)) (not ciclo)) :falla-sistema ; En caso de que alguna duracion no sea numerica o el timestamp tampoco lo sea
-              (< (mod ts ciclo) duracion-rojo) :rojo
-              (< (mod ts ciclo) (+ duracion-rojo 3)) :rojo-intermitente
-              (< (mod ts ciclo) (+ duracion-rojo 3 duracion-verde)) :verde
-              (< (mod ts ciclo) (+ duracion-rojo duracion-verde 6)) :verde-intermitente
-              (< (mod ts ciclo) (+ duracion-rojo duracion-verde duracion-amarillo 6)) :amarillo
-              :else :amarillo-intermitente)
-        )
-)
+  (let [ciclo (duracion-ciclo duracion-rojo duracion-verde duracion-amarillo)]
+    (cond
+      (or (not (number? ts)) (not ciclo)) :falla-sistema ; En caso de que alguna duracion no sea numerica o el timestamp tampoco lo sea
+      (< (mod ts ciclo) duracion-rojo) :rojo
+      (< (mod ts ciclo) (+ duracion-rojo 3)) :rojo-intermitente
+      (< (mod ts ciclo) (+ duracion-rojo 3 duracion-verde)) :verde
+      (< (mod ts ciclo) (+ duracion-rojo duracion-verde 6)) :verde-intermitente
+      (< (mod ts ciclo) (+ duracion-rojo duracion-verde duracion-amarillo 6)) :amarillo
+      :else :amarillo-intermitente)))
 
 
 ;; =============================================================================================================================
@@ -102,8 +100,6 @@
 ;; ========================================================
 
 (defn transicion [color-actual cambiar-a]
-    (if (validar-transiciones-p color-actual cambiar-a)
-        (list color-actual (str "cambiar-a-" (name cambiar-a)))
-        (list color-actual :accion-por-defecto)
-    )
-)
+  (if (validar-transiciones-p color-actual cambiar-a)
+    (list color-actual (str "cambiar-a-" (name cambiar-a)))
+    (list color-actual :accion-por-defecto)))
